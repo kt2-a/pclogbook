@@ -10,13 +10,7 @@
 int success = 0;
 /*
     Function: checkPlaintext
-    Operation: Compares the recently acquired result to the target plaintext.
-    Inputs: char* plaintext - pointer to target plaintext
-            char* result - pointer to result of decryption attempt.
-    Output: return strncmp(plaintext, result, length) - value < 0 : plaintext > result
-                                                        value > 0 : plaintext < result
-                                                        value = 0 : plaintext = result
-    Notes: Complies with the standards of a Known-Plaintext-Attack.
+    Operation: Juxtapose result to plaintext.
 */
 int checkPlaintext(char* plaintext, char* result){
     int length = 10;
@@ -59,8 +53,7 @@ unsigned char* decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned c
     * IV size for *most* modes is the same as the block size. For AES this
     * is 128 bits */
     
-    //printf("%lu\n", strlen(key));
-    //printf("%lu\n", strlen(iv));
+
     if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
         handleOpenSSLErrors();
 
@@ -123,13 +116,10 @@ void Base64Decode( char* b64message, unsigned char** buffer, size_t* length) {
     BIO_free_all(bio);
 }
 
-/*
-    Function: main
-    Operation: primary runtime, initialise variables, generate password, create parallel region, attempt cracking.
-*/
+
 int main (int argc, char **argv){
    
-    //Initialise OpenMPI specific variables, used in message passing and vector assignment.
+    /* Initialize MPI variables */
     MPI_Status status;
     MPI_Request req;
     int ranking, sizing, error, test, rcvbuf, sendbuf;
